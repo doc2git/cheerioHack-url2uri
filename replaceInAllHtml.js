@@ -1,3 +1,3 @@
 const config = require('./config');
-var replaceRelativeUriToProtocalUriInHtml = require('./index.js');
-replaceRelativeUriToProtocalUriInHtml(config);
+var schedule = require('./index.js');
+schedule(config);

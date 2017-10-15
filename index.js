@@ -5,9 +5,19 @@ const fs = require('fs');
 const url = require('url');
 const is = require('valido');
 const config = require('./config');
-let cheerioUri = require('./cheerio-uri');
+let cheerioHtml = require('./cheerio-html');
 
-module.exports = function replaceRelativeUriToProtocalUriInHtml(config, ...args) {
+// var write = (callback, filePath, strContent) => {
+//     filePath = callback(filePath);
+//     return function (filePath) {
+//         fs.writeFile(filePath, strContent, 'utf8', err => {
+//             if (err) console.error(err);
+//             console.log(filePath + ' has been converted!\n');
+//         });
+//     }
+// }
+
+module.exports = function schedule(config, ...args) {
     //concat pass in args to config.uriReplaceSrcList
     args = config.uriReplaceSrcList.concat([...args]);
     //default rename file rule function
@@ -28,18 +38,32 @@ module.exports = function replaceRelativeUriToProtocalUriInHtml(config, ...args)
     args.forEach(function (itemName) {
         var f = {};
 
+        var content = cheerioHtml(itemName);
 
         var promiseHtml = new Promise((resolve, reject) => {
-            resolve(itemName)
+            resolve(content)
             // resolve(fs.readFileSync(itemName, 'utf8'))
         });
-        promiseHtml
-            .then(function(itemName){
-                cheerioUri(itemName)
+        promiseHtml.then(function (content) {
+            console.log(content, '48 index, &&&&&&&&&');
+            fs.writeFile(itemName, content, (err, data) => {
+                console.error(err);
+                console.log(itemName + ' has been replaced!');
+            });
         })
-        //     .then(function (content) {
-        //     write(fnRenameFileRule, itemName, content);
-        // });
+        // promiseHtml
+        //     .then(function (itemName) {
+        //         cheerioHtml.cheerioReplaceAllUri(itemName)
+        //         return cheerioHtml;
+        //     })
+        //     .then(function (cheerioHtml) {
+        //         var content = cheerioHtml.replacedHtml;
+        //         console.log(content, '52**&&&&&&&&&&&&&&&&&&&&&');
+        //         // write(fnRenameFileRule, itemName, content);
+        //     })
+        // //     .then(function (content) {
+        // //     write(fnRenameFileRule, itemName, content);
+        // // });
     });
 };
 
